@@ -1,0 +1,69 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 10 10 10;
+    --foreground: 228 228 231;
+  }
+  
+  body {
+    @apply bg-bg-near-black text-text-primary;
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+  
+  * {
+    @apply border-border-subtle;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-track {
+    @apply bg-bg-near-black;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    @apply bg-bg-elevated rounded-full;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    @apply bg-bg-hover;
+  }
+}
+
+.markdown-content {
+  @apply text-text-primary;
+}
+
+.markdown-content h1 {
+  @apply text-2xl font-semibold mb-4 text-text-white;
+}
+
+.markdown-content h2 {
+  @apply text-xl font-semibold mb-3 text-text-white;
+}
+
+.markdown-content p {
+  @apply mb-4 leading-relaxed;
+}
+
+.markdown-content code {
+  @apply bg-bg-pure-black px-1.5 py-0.5 rounded text-sm font-mono text-accent-secondary;
+}
+
+.markdown-content pre {
+  @apply bg-bg-pure-black p-4 rounded-md overflow-x-auto mb-4;
+}
+
+.markdown-content a {
+  @apply text-accent-primary hover:text-accent-hover underline transition-colors;
+}

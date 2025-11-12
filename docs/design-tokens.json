@@ -1,0 +1,356 @@
+{
+  "color": {
+    "background": {
+      "pure-black": {
+        "value": "#000000",
+        "type": "color",
+        "description": "OLED optimization, sidebar, hero sections"
+      },
+      "near-black": {
+        "value": "#0A0A0A",
+        "type": "color",
+        "description": "Main application background (Level 0)"
+      },
+      "elevated": {
+        "value": "#141414",
+        "type": "color",
+        "description": "Cards, message bubbles, modals (Level 1)"
+      },
+      "hover": {
+        "value": "#1E1E1E",
+        "type": "color",
+        "description": "Hover states, active elements (Level 2)"
+      },
+      "tooltip": {
+        "value": "#282828",
+        "type": "color",
+        "description": "Tooltips, popovers (Level 3)"
+      }
+    },
+    "text": {
+      "primary": {
+        "value": "#E4E4E7",
+        "type": "color",
+        "description": "Primary content, headings (zinc-200, 15.2:1 contrast)"
+      },
+      "secondary": {
+        "value": "#A1A1AA",
+        "type": "color",
+        "description": "Secondary text, captions (zinc-400, 8.9:1 contrast)"
+      },
+      "tertiary": {
+        "value": "#71717A",
+        "type": "color",
+        "description": "Timestamps, metadata (zinc-500, 5.2:1 contrast)"
+      },
+      "white": {
+        "value": "#FFFFFF",
+        "type": "color",
+        "description": "High-emphasis elements (21:1 contrast)"
+      }
+    },
+    "accent": {
+      "primary": {
+        "value": "#3B82F6",
+        "type": "color",
+        "description": "Primary actions, CTAs, user messages (blue-500, 8.6:1 contrast)"
+      },
+      "hover": {
+        "value": "#60A5FA",
+        "type": "color",
+        "description": "Accent hover states (blue-400, 11.2:1 contrast)"
+      },
+      "glow": {
+        "value": "rgba(59, 130, 246, 0.5)",
+        "type": "color",
+        "description": "Glow effects for interactive elements"
+      },
+      "secondary": {
+        "value": "#06B6D4",
+        "type": "color",
+        "description": "Secondary actions, search toggle (cyan-500, 9.1:1 contrast)"
+      }
+    },
+    "semantic": {
+      "success": {
+        "value": "#22C55E",
+        "type": "color",
+        "description": "Success states, verification (green-500, 8.8:1 contrast)"
+      },
+      "warning": {
+        "value": "#F59E0B",
+        "type": "color",
+        "description": "Warnings, cautions (amber-500, 7.2:1 contrast)"
+      },
+      "error": {
+        "value": "#EF4444",
+        "type": "color",
+        "description": "Errors, destructive actions (red-500, 6.1:1 contrast)"
+      },
+      "info": {
+        "value": "#8B5CF6",
+        "type": "color",
+        "description": "Information, thinking traces (violet-500, 5.8:1 contrast)"
+      }
+    },
+    "border": {
+      "subtle": {
+        "value": "rgba(255, 255, 255, 0.1)",
+        "type": "color",
+        "description": "Subtle separation, card borders"
+      },
+      "moderate": {
+        "value": "rgba(255, 255, 255, 0.15)",
+        "type": "color",
+        "description": "Hover borders, active states"
+      },
+      "strong": {
+        "value": "rgba(255, 255, 255, 0.2)",
+        "type": "color",
+        "description": "Strong emphasis, focus states"
+      },
+      "accent": {
+        "value": "#3B82F6",
+        "type": "color",
+        "description": "Accent borders, active indicators"
+      }
+    }
+  },
+  "typography": {
+    "fontFamily": {
+      "primary": {
+        "value": "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
+        "type": "fontFamily",
+        "description": "UI text, body content, headings"
+      },
+      "mono": {
+        "value": "'JetBrains Mono', 'Fira Code', 'Courier New', monospace",
+        "type": "fontFamily",
+        "description": "Code blocks, thinking traces, data"
+      }
+    },
+    "fontSize": {
+      "xs": {
+        "value": "12px",
+        "type": "fontSize",
+        "description": "Fine print, badges"
+      },
+      "sm": {
+        "value": "14px",
+        "type": "fontSize",
+        "description": "Captions, labels, timestamps"
+      },
+      "base": {
+        "value": "16px",
+        "type": "fontSize",
+        "description": "Body text, chat messages"
+      },
+      "lg": {
+        "value": "18px",
+        "type": "fontSize",
+        "description": "Large body, intro text"
+      },
+      "xl": {
+        "value": "20px",
+        "type": "fontSize",
+        "description": "Subheadings, card titles"
+      },
+      "2xl": {
+        "value": "24px",
+        "type": "fontSize",
+        "description": "Section headers"
+      },
+      "3xl": {
+        "value": "32px",
+        "type": "fontSize",
+        "description": "Page titles"
+      },
+      "4xl": {
+        "value": "40px",
+        "type": "fontSize",
+        "description": "Hero headlines"
+      }
+    },
+    "fontWeight": {
+      "regular": {
+        "value": 400,
+        "type": "fontWeight",
+        "description": "Body text, standard content"
+      },
+      "medium": {
+        "value": 500,
+        "type": "fontWeight",
+        "description": "Emphasized text, button labels"
+      },
+      "semibold": {
+        "value": 600,
+        "type": "fontWeight",
+        "description": "Headings, active states"
+      },
+      "bold": {
+        "value": 700,
+        "type": "fontWeight",
+        "description": "Strong emphasis, hero text"
+      }
+    },
+    "lineHeight": {
+      "tight": {
+        "value": 1.1,
+        "type": "lineHeight",
+        "description": "Hero headlines"
+      },
+      "snug": {
+        "value": 1.2,
+        "type": "lineHeight",
+        "description": "Large headings"
+      },
+      "normal": {
+        "value": 1.5,
+        "type": "lineHeight",
+        "description": "Body text, UI elements"
+      },
+      "relaxed": {
+        "value": 1.6,
+        "type": "lineHeight",
+        "description": "Large body text"
+      }
+    }
+  },
+  "spacing": {
+    "1": {
+      "value": "4px",
+      "type": "spacing",
+      "description": "Tight inline spacing, icon padding"
+    },
+    "2": {
+      "value": "8px",
+      "type": "spacing",
+      "description": "Inline spacing, small gaps"
+    },
+    "3": {
+      "value": "12px",
+      "type": "spacing",
+      "description": "Compact element gaps"
+    },
+    "4": {
+      "value": "16px",
+      "type": "spacing",
+      "description": "Standard element gaps"
+    },
+    "6": {
+      "value": "24px",
+      "type": "spacing",
+      "description": "Card padding (compact), section gaps"
+    },
+    "8": {
+      "value": "32px",
+      "type": "spacing",
+      "description": "Card padding (standard), component spacing"
+    },
+    "12": {
+      "value": "48px",
+      "type": "spacing",
+      "description": "Section margins, large gaps"
+    },
+    "16": {
+      "value": "64px",
+      "type": "spacing",
+      "description": "Large section spacing"
+    },
+    "20": {
+      "value": "80px",
+      "type": "spacing",
+      "description": "Hero padding (mobile)"
+    },
+    "32": {
+      "value": "128px",
+      "type": "spacing",
+      "description": "Hero padding (desktop)"
+    }
+  },
+  "borderRadius": {
+    "sm": {
+      "value": "8px",
+      "type": "borderRadius",
+      "description": "Buttons, small cards, badges"
+    },
+    "md": {
+      "value": "12px",
+      "type": "borderRadius",
+      "description": "Standard buttons, inputs"
+    },
+    "lg": {
+      "value": "16px",
+      "type": "borderRadius",
+      "description": "Cards, modals, large containers"
+    },
+    "xl": {
+      "value": "24px",
+      "type": "borderRadius",
+      "description": "Hero sections, feature cards"
+    },
+    "full": {
+      "value": "9999px",
+      "type": "borderRadius",
+      "description": "Pills, avatars, circular elements"
+    }
+  },
+  "boxShadow": {
+    "card": {
+      "value": "0 0 0 1px rgba(255,255,255,0.05), 0 4px 12px rgba(0,0,0,0.5)",
+      "type": "boxShadow",
+      "description": "Elevated cards, message bubbles"
+    },
+    "modal": {
+      "value": "0 0 0 1px rgba(255,255,255,0.1), 0 8px 24px rgba(0,0,0,0.7)",
+      "type": "boxShadow",
+      "description": "Modals, overlays, dropdowns"
+    },
+    "glow-accent": {
+      "value": "0 0 20px rgba(59,130,246,0.5), 0 0 40px rgba(59,130,246,0.3)",
+      "type": "boxShadow",
+      "description": "Primary button hover, active search toggle"
+    },
+    "glow-subtle": {
+      "value": "0 0 12px rgba(59,130,246,0.3)",
+      "type": "boxShadow",
+      "description": "Input focus, secondary interactions"
+    }
+  },
+  "animation": {
+    "duration": {
+      "fast": {
+        "value": "150ms",
+        "type": "duration",
+        "description": "Button hover, icon changes"
+      },
+      "normal": {
+        "value": "250ms",
+        "type": "duration",
+        "description": "Card elevation, transitions"
+      },
+      "slow": {
+        "value": "400ms",
+        "type": "duration",
+        "description": "Modals, panels, thinking trace expand"
+      },
+      "pulse": {
+        "value": "2000ms",
+        "type": "duration",
+        "description": "Glow pulse, typing indicator"
+      }
+    },
+    "easing": {
+      "default": {
+        "value": "ease-out",
+        "type": "cubicBezier",
+        "description": "Standard easing for 90% of animations"
+      },
+      "sharp": {
+        "value": "cubic-bezier(0.4, 0.0, 0.2, 1)",
+        "type": "cubicBezier",
+        "description": "Sharp, precise movements"
+      }
+    }
+  }
+}
