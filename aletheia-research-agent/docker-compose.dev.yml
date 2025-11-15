@@ -1,0 +1,37 @@
+# Development Override
+# Use with: docker-compose -f docker-compose.yml -f docker-compose.dev.yml up
+
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      target: development
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+      - /app/.next
+    environment:
+      - NODE_ENV=development
+      - WATCHPACK_POLLING=true
+
+  backend:
+    volumes:
+      - ./backend:/app
+      - /app/venv
+    environment:
+      - ENVIRONMENT=development
+      - DEBUG=true
+    command: >
+      sh -c "source venv/bin/activate &&
+             python -m uvicorn main:app --host 0.0.0.0 --port 8001 --reload --log-level debug"
+
+  postgres:
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=aletheia_dev
+
+  redis:
+    ports:
+      - "6379:6379"

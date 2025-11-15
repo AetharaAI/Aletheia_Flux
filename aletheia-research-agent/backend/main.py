@@ -8,9 +8,42 @@ from middleware.rate_limiter import rate_limit_middleware
 from middleware.error_handler import error_handler_middleware
 from api.auth_routes import router as auth_router
 from api.chat_routes import router as chat_router
-from config import settings
+from api.discovery_routes import router as discovery_router, discovery_system
+from config import settings, supabase
 from fastapi.security import HTTPBearer
 from jose import jwt
+
+# ============================================================================
+# Initialize Agent Discovery System (if enabled)
+# ============================================================================
+
+# Check if discovery is enabled
+discovery_enabled = getattr(settings, 'discovery_enabled', False)
+
+if discovery_enabled:
+    try:
+        from agents.discovery_agent import AgentDiscoverySystem
+        from llm.minimax_client import MiniMaxClient
+        from tools.web_search import WebSearchTool
+
+        # Initialize discovery system
+        discovery_system = AgentDiscoverySystem(
+            minimax_client=MiniMaxClient(),  # No arguments needed
+            tavily_client=WebSearchTool(),  # No arguments needed, reads from settings
+            grok_api_key=getattr(settings, 'grok_api_key', ''),
+            firecrawl_api_key=getattr(settings, 'firecrawl_api_key', ''),
+            supabase_client=supabase
+        )
+
+        print("✓ Agent Discovery System initialized")
+    except Exception as e:
+        print(f"⚠ Warning: Could not initialize discovery system: {e}")
+        import traceback
+        traceback.print_exc()
+        discovery_system = None
+else:
+    print("ℹ Discovery system disabled (set DISCOVERY_ENABLED=true to enable)")
+    discovery_system = None
 
 security = HTTPBearer()
 
@@ -49,6 +82,11 @@ app.middleware("http")(error_handler_middleware)
 # Include routers
 app.include_router(auth_router)
 app.include_router(chat_router)
+
+# Include discovery routes (if enabled)
+if discovery_enabled and discovery_system:
+    app.include_router(discovery_router)
+    print("✓ Discovery routes registered")
 
 
 @app.get("/")

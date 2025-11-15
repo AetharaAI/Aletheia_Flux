@@ -1,0 +1,235 @@
+version: '3.8'
+
+services:
+  # ============================================================================
+  # Frontend (Next.js)
+  # ============================================================================
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: aletheia-frontend
+    ports:
+      - "3001:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://backend:8001
+      - NEXT_PUBLIC_SUPABASE_URL=${SUPABASE_URL}
+      - NEXT_PUBLIC_SUPABASE_ANON_KEY=${SUPABASE_ANON_KEY}
+    depends_on:
+      - backend
+    networks:
+      - aletheia-network
+    restart: unless-stopped
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+      - /app/.next
+
+  # ============================================================================
+  # Backend (FastAPI)
+  # ============================================================================
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: aletheia-backend
+    ports:
+      - "8001:8001"
+    environment:
+      # MiniMax
+      - MINIMAX_API_KEY=${MINIMAX_API_KEY}
+      - MINIMAX_BASE_URL=${MINIMAX_BASE_URL:-https://api.minimax.io/anthropic}
+
+      # Supabase
+      - SUPABASE_URL=${SUPABASE_URL}
+      - SUPABASE_ANON_KEY=${SUPABASE_ANON_KEY}
+      - SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY}
+
+      # Tavily
+      - TAVILY_API_KEY=${TAVILY_API_KEY}
+
+      # Grok (Agent Discovery)
+      - GROK_API_KEY=${GROK_API_KEY:-placeholder-will-get-real-key}
+
+      # Firecrawl (Agent Discovery)
+      - FIRECRAWL_API_KEY=${FIRECRAWL_API_KEY:-placeholder-will-get-real-key}
+
+      # Discovery Config
+      - DISCOVERY_ENABLED=${DISCOVERY_ENABLED:-true}
+      - DISCOVERY_SCHEDULE_HOUR=${DISCOVERY_SCHEDULE_HOUR:-2}
+      - DISCOVERY_MAX_RESULTS=${DISCOVERY_MAX_RESULTS:-50}
+      - DISCOVERY_AUTO_VERIFY_THRESHOLD=${DISCOVERY_AUTO_VERIFY_THRESHOLD:-0.9}
+
+      # JWT
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - JWT_ALGORITHM=${JWT_ALGORITHM:-HS256}
+      - JWT_ACCESS_TOKEN_EXPIRE_MINUTES=${JWT_ACCESS_TOKEN_EXPIRE_MINUTES:-60}
+      - JWT_REFRESH_TOKEN_EXPIRE_DAYS=${JWT_REFRESH_TOKEN_EXPIRE_DAYS:-7}
+
+      # Rate Limiting
+      - RATE_LIMIT_PER_MINUTE=${RATE_LIMIT_PER_MINUTE:-20}
+
+      # Environment
+      - ENVIRONMENT=${ENVIRONMENT:-development}
+
+    depends_on:
+      - redis
+      - postgres
+    networks:
+      - aletheia-network
+    restart: unless-stopped
+    volumes:
+      - ./backend:/app
+      - /app/venv
+    command: >
+      sh -c "source venv/bin/activate &&
+             python -m uvicorn main:app --host 0.0.0.0 --port 8001 --reload"
+
+  # ============================================================================
+  # Redis (Caching & Rate Limiting)
+  # ============================================================================
+  redis:
+    image: redis:7-alpine
+    container_name: aletheia-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - aletheia-network
+    restart: unless-stopped
+    volumes:
+      - redis-data:/data
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ============================================================================
+  # PostgreSQL (Local Development)
+  # Note: In production, use managed Supabase or external PostgreSQL
+  # ============================================================================
+  postgres:
+    image: postgres:15-alpine
+    container_name: aletheia-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER:-aletheia}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-aletheia}
+      - POSTGRES_DB=${POSTGRES_DB:-aletheia}
+    networks:
+      - aletheia-network
+    restart: unless-stopped
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./backend/database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-aletheia}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ============================================================================
+  # Agent Discovery Scheduler (Optional)
+  # Runs automated discovery jobs
+  # ============================================================================
+  discovery-scheduler:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: aletheia-discovery-scheduler
+    environment:
+      # All backend environment variables
+      - MINIMAX_API_KEY=${MINIMAX_API_KEY}
+      - SUPABASE_URL=${SUPABASE_URL}
+      - SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY}
+      - TAVILY_API_KEY=${TAVILY_API_KEY}
+      - GROK_API_KEY=${GROK_API_KEY}
+      - FIRECRAWL_API_KEY=${FIRECRAWL_API_KEY}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+    depends_on:
+      - backend
+      - redis
+    networks:
+      - aletheia-network
+    restart: unless-stopped
+    volumes:
+      - ./backend:/app
+      - /app/venv
+    command: >
+      sh -c "source venv/bin/activate &&
+             python -c 'import schedule, time; schedule.every().day.at(\"02:00\").do(lambda: None); print(\\\"Discovery scheduler running...\\\"); schedule.every().hour.do(lambda: print(\\\"Heartbeat\\\")); [schedule.run_pending() for _ in range(10**6)]'"
+    profiles:
+      - scheduler
+
+  # ============================================================================
+  # pgAdmin (PostgreSQL Management UI)
+  # ============================================================================
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: aletheia-pgadmin
+    ports:
+      - "5050:80"
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL:-admin@aletheia.com}
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD:-admin}
+      - PGADMIN_CONFIG_SERVER_MODE=${PGADMIN_CONFIG_SERVER_MODE:-False}
+    depends_on:
+      - postgres
+    networks:
+      - aletheia-network
+    restart: unless-stopped
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    profiles:
+      - admin
+
+  # ============================================================================
+  # Redis Commander (Redis Management UI)
+  # ============================================================================
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: aletheia-redis-commander
+    ports:
+      - "8081:8081"
+    environment:
+      - REDIS_HOSTS=local:redis:6379
+    depends_on:
+      - redis
+    networks:
+      - aletheia-network
+    restart: unless-stopped
+    profiles:
+      - admin
+
+# ============================================================================
+# Networks
+# ============================================================================
+networks:
+  aletheia-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+
+# ============================================================================
+# Volumes
+# ============================================================================
+volumes:
+  postgres-data:
+    driver: local
+  redis-data:
+    driver: local
+  pgadmin-data:
+    driver: local
+
+# ============================================================================
+# Development Override
+# ============================================================================
+# To use: docker-compose -f docker-compose.yml -f docker-compose.dev.yml up
+#
+# Create docker-compose.dev.yml for local development overrides:
+# - Mount source code for live reload
+# - Disable build cache
+# - Set environment to development
